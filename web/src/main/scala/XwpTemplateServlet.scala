@@ -13,7 +13,13 @@ class XwpTemplateServlet extends HttpServlet {
     response.setContentType("text/html")
     response.setCharacterEncoding("UTF-8")
 
-    val responseBody: NodeSeq = <html><body><h1>Hello, world!</h1></body></html>
+    val responseBody: NodeSeq =
+       <html>
+         <body>
+           <h1>Hello, world!</h1>
+           <p>{"21 + 21 = " + Math.add(21, 21).toString }</p>
+         </body>
+       </html>
     response.getWriter.write(responseBody.toString)
   }
 }
