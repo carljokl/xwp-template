@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/earldouglas/xwp-template.svg?branch=master)](https://travis-ci.org/earldouglas/xwp-template)
+
 # Getting started with xsbt-web-plugin
 
 This project shows how to build a basic Scala Web application using sbt and [xsbt-web-plugin](https://github.com/JamesEarlDouglas/xsbt-web-plugin).  To get started, either clone this project or follow the steps below to recreate it.
