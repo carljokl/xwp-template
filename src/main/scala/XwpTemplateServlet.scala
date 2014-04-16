@@ -1,6 +1,5 @@
 package com.earldouglas.xwptemplate
 
-import scala.xml.NodeSeq
 import javax.servlet.http.HttpServlet
 
 class XwpTemplateServlet extends HttpServlet {
@@ -8,12 +7,27 @@ class XwpTemplateServlet extends HttpServlet {
   import javax.servlet.http.HttpServletRequest
   import javax.servlet.http.HttpServletResponse
 
-  override def doGet(request: HttpServletRequest, response: HttpServletResponse) {
+  override def service(req: HttpServletRequest, res: HttpServletResponse) {
 
-    response.setContentType("text/html")
-    response.setCharacterEncoding("UTF-8")
+    val r = req.getReader
 
-    val responseBody: NodeSeq = <html><body><h1>Hello, world!</h1></body></html>
-    response.getWriter.write(responseBody.toString)
+    def echoLines: Unit =
+    Option(r.readLine) foreach { line => // read a chunk from the request
+
+      // simulate slow server-side processing
+      Thread.sleep(1000)
+
+      // write a chunk to the response
+      res.getWriter.write("read line: " + line + "\n")
+
+      // force the response buffer to be written to the client
+      res.flushBuffer
+
+      // repeat until the request is completely processed
+      echoLines
+    }
+
+    echoLines
   }
+      
 }

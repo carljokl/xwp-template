@@ -13,7 +13,7 @@
 
   <servlet-mapping>
     <servlet-name>xwp template</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/echo</url-pattern>
   </servlet-mapping>
 
 </web-app>
