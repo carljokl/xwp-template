@@ -29,7 +29,7 @@ class XwpTemplateServlet extends HttpServlet {
       Thread.sleep(1000)
 
       // write the progress and the chunk to the response
-      res.getWriter.write(progress(s.`match`.end) + ": " + line)
+      res.getWriter.write(progress(s.`match`.end) + ": " + line + "\n")
 
       // force the response buffer to be written immediately to the client
       res.flushBuffer
