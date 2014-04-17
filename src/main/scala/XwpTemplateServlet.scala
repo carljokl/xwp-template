@@ -8,7 +8,7 @@ class XwpTemplateServlet extends HttpServlet {
   import javax.servlet.http.HttpServletResponse
   import java.util.Scanner
 
-  override def service(req: HttpServletRequest, res: HttpServletResponse) {
+  override def doPost(req: HttpServletRequest, res: HttpServletResponse) {
 
     def progress(pos: Int) =
       req.getContentLength match {
