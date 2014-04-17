@@ -51,9 +51,10 @@ the return of each line of the request about one second after the previous:
 
 ```
 $ curl --no-buffer -X POST --data-binary @test.txt localhost:8080/echo
-26%: Hello, world!
-40%: Line 2
-54%: Line 3
+25%: Hello, world!
+39%: Line 2
+41%: 
+54%: Line 4
 78%: One more...
 98%: All done!
 ```

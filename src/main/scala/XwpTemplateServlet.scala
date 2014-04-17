@@ -19,7 +19,7 @@ class XwpTemplateServlet extends HttpServlet {
       }
 
     val s = new Scanner(req.getInputStream)
-    s.useDelimiter("[\r\n]+");
+    s.useDelimiter("[\r\n]");
 
     while (s.hasNext) { // repeat until the request is completely processed
 
