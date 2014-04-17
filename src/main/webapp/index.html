@@ -1,27 +1,48 @@
 <html>
   <head>
     <script>
-      function go() {
-        var xhr;
+
+      function XHR() {
         if (window.XMLHttpRequest) {
           // IE7+, Firefox, Chrome, Opera, Safari
-          xhr = new XMLHttpRequest();
+          return new XMLHttpRequest();
         } else {
-          // code for IE6, IE5
-          xhr = new ActiveXObject('Microsoft.XMLHTTP');
+          // IE6, IE5
+          return new ActiveXObject('Microsoft.XMLHTTP');
         }
-        xhr.onreadystatechange=function() {
-          if (xhr.readyState == 3 && xhr.status == 200) {
-            var out = document.getElementById('out');
-            out.innerHTML = xhr.responseText;
+      }
+
+      function println(html) {
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+
+      function chunkDemo(xhr) {
+        var len = 0;
+        xhr.onreadystatechange =
+          function() {
+            if (xhr.readyState == 3 && xhr.status == 200) {
+              var chunk = xhr.responseText.substr(len);
+              len = len + chunk.length; 
+              println(chunk);
+            }
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              println('<hr />');
+            }
           }
-        }
         xhr.open('POST', '/echo', true);
         xhr.send('hello\nworld\n\n1\n2\n3\n4\n5');
       }
+
+      function go() {
+        chunkDemo(XHR());
+      }
+
     </script>
   </head>
-  <body onload="go()">
-    <pre id="out"></pre>
+  <body>
+    <button onclick="go()">go</button>
+    <hr />
   </body>
 </head>

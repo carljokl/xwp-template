@@ -6,28 +6,36 @@ class XwpTemplateServlet extends HttpServlet {
 
   import javax.servlet.http.HttpServletRequest
   import javax.servlet.http.HttpServletResponse
+  import java.util.Scanner
 
   override def service(req: HttpServletRequest, res: HttpServletResponse) {
 
-    val r = req.getReader
+    def progress(pos: Int) =
+      req.getContentLength match {
+        case x if x >= 0 =>
+          (pos.toDouble / x.toDouble * 100).toInt.toString + "%"
+        case _ =>
+          "(progress unknown)"
+      }
 
-    def echoLines: Unit =
-    Option(r.readLine) foreach { line => // read a chunk from the request
+    val s = new Scanner(req.getInputStream)
+    s.useDelimiter("[\r\n]+");
 
-      // simulate slow server-side processing
+    while (s.hasNext) { // repeat until the request is completely processed
+
+      val line = s.next // read a chunk from the request
+      
+      // simulate slow server-side processing of the chunk
       Thread.sleep(1000)
 
-      // write a chunk to the response
-      res.getWriter.write("read line: " + line + "\n")
+      // write the progress and the chunk to the response
+      res.getWriter.write(progress(s.`match`.end) + ": " + line)
 
-      // force the response buffer to be written to the client
+      // force the response buffer to be written immediately to the client
       res.flushBuffer
 
-      // repeat until the request is completely processed
-      echoLines
     }
 
-    echoLines
   }
       
 }
