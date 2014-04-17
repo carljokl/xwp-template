@@ -3,7 +3,9 @@
 *April 16, 2014*
 
 In Web programming, it is often handy to be able to process an HTTP request as 
-a stream while sending back periodic status updates to the client.
+a stream while sending back periodic status updates to the client.  Consider an 
+application that performs some time-consuming computation on incremental subsets 
+of request data, or an application that handles the uploading of a large file.
 
 Using [Java servlets](http://en.wikipedia.org/wiki/Java_Servlet), we can write 
 a simple server that reads a request body line by line, and echos back to the 
@@ -41,11 +43,14 @@ override def doPost(req: HttpServletRequest, res: HttpServletResponse) {
 }
 ```
 
-We can test this using curl, observing each line returing about one second 
-later than the last:
+In practice, we might not be working strictly with text data, but it makes for 
+a clean example.
+
+We can test this service using curl with the `--no-buffer` option, observing 
+the return of each line of the request about one second after the previous:
 
 ```
-$ curl -N -X POST --data-binary @test.txt localhost:8080/echo
+$ curl --no-buffer -X POST --data-binary @test.txt localhost:8080/echo
 26%: Hello, world!
 40%: Line 2
 54%: Line 3
@@ -104,3 +109,6 @@ Connecting this to a `textarea`, we get something like this:
 ![chunky-http screenshot](https://raw.githubusercontent.com/earldouglas/xwp-template/chunky/readme/chunky-http.png)
 
 Check out the demo at [chunky-http.herokuapp.com](http://chunky-http.herokuapp.com/)
+
+This article was inspired by [*Servlet/Javascript chunking*](http://stackoverflow.com/questions/23095434/servlet-javascript-chunking/23113819) 
+on Stack Overflow.
