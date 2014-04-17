@@ -18,7 +18,7 @@
         document.getElementsByTagName('body')[0].appendChild(div);
       }
 
-      function chunkDemo(xhr) {
+      function echo(xhr,data) {
         var len = 0;
         xhr.onreadystatechange =
           function() {
@@ -32,17 +32,25 @@
             }
           }
         xhr.open('POST', '/echo', true);
-        xhr.send('hello\nworld\n\n1\n2\n3\n4\n5');
+        xhr.send(data);
       }
 
       function go() {
-        chunkDemo(XHR());
+        var data = document.getElementById('data').value;
+        echo(XHR(), data);
       }
 
     </script>
   </head>
   <body>
-    <button onclick="go()">go</button>
+
+<textarea id="data" rows="8" cols="40">Hello, world!
+Line 2
+Line 3
+One more...
+All done!</textarea>
+
+    <button onclick="go()">echo</button>
     <hr />
   </body>
 </head>
