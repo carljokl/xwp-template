@@ -49,7 +49,7 @@ class ServletTests extends FunSuite with BeforeAndAfterAll {
 
   test("GET /") {
     val res = get("http://localhost:8080/")
-    assert(res === """<html><body><h1>Hello, world!</h1></body></html>""")
+    assert(res.contains("""<h1>Hello, world!</h1>"""))
   }
 
 }
