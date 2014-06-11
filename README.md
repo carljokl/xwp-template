@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/earldouglas/xwp-template.svg?branch=master)](https://travis-ci.org/earldouglas/xwp-template)
+[![Build Status](https://travis-ci.org/earldouglas/xwp-template.svg)](https://travis-ci.org/earldouglas/xwp-template)
+ [![Coverage Status](https://coveralls.io/repos/earldouglas/xwp-template/badge.png)](https://coveralls.io/r/earldouglas/xwp-template)
 
 # Getting started with xsbt-web-plugin
 
