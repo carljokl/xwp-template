@@ -6,33 +6,36 @@ class XwpTemplateServlet extends HttpServlet {
 
   import javax.servlet.http.HttpServletRequest
   import javax.servlet.http.HttpServletResponse
-  import java.util.Scanner
+
+  override def doGet(req: HttpServletRequest, res: HttpServletResponse) {
+    res.sendRedirect("/")
+  }
 
   override def doPost(req: HttpServletRequest, res: HttpServletResponse) {
 
-    def progress(pos: Int) =
-      req.getContentLength match {
-        case x if x >= 0 =>
-          (pos.toDouble / x.toDouble * 100).toInt.toString + "%"
-        case _ =>
-          "(progress unknown)"
+    val file = req.getPart("file")
+
+    var index = 0L
+    var buffer = Array.fill[Byte](1024)(0)
+    var lastProgress = 0
+
+    val stream = file.getInputStream
+    while (stream.available > 0) { // repeat until the request is processed
+
+      val read = stream.read(buffer) // read a chunk from the request
+      Thread.sleep(10) // simulate slow server-side processing of the chunk
+
+      index = index + read // track progress
+
+      val progress = (index.toDouble / file.getSize.toDouble * 100).toInt
+
+      if (progress > lastProgress) {
+        // write progress to the response
+        res.getWriter.write(progress.toString + "%" + "\n")
+        lastProgress = progress
       }
 
-    val s = new Scanner(req.getInputStream)
-    s.useDelimiter("[\r\n]");
-
-    while (s.hasNext) { // repeat until the request is completely processed
-
-      val line = s.next // read a chunk from the request
-      
-      // simulate slow server-side processing of the chunk
-      Thread.sleep(1000)
-
-      // write the progress and the chunk to the response
-      res.getWriter.write(progress(s.`match`.end) + ": " + line + "\n")
-
-      // force the response buffer to be written immediately to the client
-      res.flushBuffer
+      res.flushBuffer // force-write the response buffer to the client
 
     }
 

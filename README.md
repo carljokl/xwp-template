@@ -8,104 +8,109 @@ application that performs some time-consuming computation on incremental subsets
 of request data, or an application that handles the uploading of a large file.
 
 Using [Java servlets](http://en.wikipedia.org/wiki/Java_Servlet), we can write 
-a simple server that reads a request body line by line, and echos back to the 
-client each line that it reads, along with the current progress:
+a simple server that reads a file from a multipart POST request, processes the
+file slowly, and keeps the client updated with the current progress:
 
 ```scala
-override def doPost(req: HttpServletRequest, res: HttpServletResponse) {
+def doPost(req: HttpServletRequest, res: HttpServletResponse) {
 
-  def progress(pos: Int) =
-    req.getContentLength match {
-      case x if x >= 0 =>
-        (pos.toDouble / x.toDouble * 100).toInt.toString + "%"
-      case _ =>
-        "(progress unknown)"
+  val file = req.getPart("file")
+
+  var index = 0L
+  var buffer = Array.fill[Byte](1024)(0)
+  var lastProgress = 0
+
+  val stream = file.getInputStream
+  while (stream.available > 0) { // repeat until the request is processed
+
+    val read = stream.read(buffer) // read a chunk from the request
+    Thread.sleep(10) // simulate slow server-side processing of the chunk
+
+    index = index + read // track progress
+
+    val progress = (index.toDouble / file.getSize.toDouble * 100).toInt
+
+    if (progress > lastProgress) {
+      // write progress to the response
+      res.getWriter.write(progress.toString + "%" + "\n")
+      lastProgress = progress
     }
 
-  val s = new Scanner(req.getInputStream)
-  s.useDelimiter("[\r\n]+");
-
-  while (s.hasNext) { // repeat until the request is completely processed
-
-    val line = s.next // read a chunk from the request
-      
-    // simulate slow server-side processing of the chunk
-    Thread.sleep(1000)
-
-    // write the progress and the chunk to the response
-    res.getWriter.write(progress(s.`match`.end) + ": " + line + "\n")
-
-    // force the response buffer to be written immediately to the client
-    res.flushBuffer
+    res.flushBuffer // force-write the response buffer to the client
 
   }
 
 }
 ```
 
-In practice, we might not be working strictly with text data, but it makes for 
-a clean example.
-
 We can test this service using curl with the `--no-buffer` option, observing 
-the return of each line of the request about one second after the previous:
+the return of each incremental percentage point:
 
 ```
-$ curl --no-buffer -X POST --data-binary @test.txt localhost:8080/echo
-25%: Hello, world!
-39%: Line 2
-41%: 
-54%: Line 4
-78%: One more...
-98%: All done!
+$ curl --no-buffer -X POST -F file=@test.bmp localhost:8080/upload
+1%
+2%
+3%
+4%
+...
 ```
 
 To interact with this service from JavaScript, we need an `XMLHttpRequest`:
 
 ```javascript
-function XHR() {
-  if (window.XMLHttpRequest) {
-    // IE7+, Firefox, Chrome, Opera, Safari
-    return new XMLHttpRequest();
-  } else {
-    // IE6, IE5
-    return new ActiveXObject('Microsoft.XMLHTTP');
-  }
-}
+var xhr = new XMLHttpRequest();
 ```
 
-We also need to be able to do something with the output:
+We also need to be able to do something with the output, so let's make a
+progress bar:
 
-```javascript
-function println(html) {
-  var div = document.createElement('div');
-  div.innerHTML = html;
-  document.getElementsByTagName('body')[0].appendChild(div);
-}
+```html
+<style>
+  div.progress { border: solid 1px; width: 360px; height: 14px; }
+  div.bar      { background-color: #3cf; height: 14px; } 
+  div.label    { margin-top: 6px; float: right; }
+</style>
+```
+
+```html
+<div class="progress">
+  <div id="bar" class="bar" style="width: 0%">
+    &nbsp;
+  </div>
+  <div id="label" class="label">
+    &nbsp;
+  </div>
+</div>
 ```
 
 Finally, we can make a request and handle the response.  We're watching for a 
 `readyState` of `3`, which means [*processing request*](http://www.w3schools.com/ajax/ajax_xmlhttprequest_onreadystatechange.asp):
 
 ```javascript
-function echo(xhr,data) {
-  var len = 0;
+function upload() {
+  var file = document.getElementById('file').files[0];
+  var formData = new FormData();
+  formData.append('file', file, file.name);
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("post", "/upload", true);
   xhr.onreadystatechange =
     function() {
       if (xhr.readyState == 3 && xhr.status == 200) {
-        var chunk = xhr.responseText.substr(len);
-        len = len + chunk.length; 
-        println(chunk);
+        var chunks = xhr.responseText.split('\n');
+        var chunk = chunks[chunks.length - 2];
+        document.getElementById('bar').style.width = chunk;
+        document.getElementById('label').innerHTML = chunk;
       }
       if (xhr.readyState == 4 && xhr.status == 200) {
-        println('<hr />');
+        document.getElementById('label').innerHTML = "Done!";
       }
-    }
-  xhr.open('POST', '/echo', true);
-  xhr.send(data);
+    };
+  xhr.send(formData);
 }
 ```
 
-Connecting this to a `textarea`, we get something like this:
+Connecting this to an `input` of type `file`, we get something like this:
 
 ![chunky-http screenshot](https://raw.githubusercontent.com/earldouglas/xwp-template/chunky/readme/chunky-http.png)
 

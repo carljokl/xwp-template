@@ -1,57 +1,52 @@
 <html>
   <head>
+    <style>
+      div.form     { margin-bottom: 12px; width: 360px; }
+      div.progress { border: solid 1px; width: 360px; height: 14px; }
+      div.bar      { background-color: #3cf; height: 14px; } 
+      div.label    { margin-top: 6px; float: right; }
+    </style>
     <script>
 
-      function XHR() {
-        if (window.XMLHttpRequest) {
-          // IE7+, Firefox, Chrome, Opera, Safari
-          return new XMLHttpRequest();
-        } else {
-          // IE6, IE5
-          return new ActiveXObject('Microsoft.XMLHTTP');
-        }
-      }
+      function upload() {
+        var file = document.getElementById('file').files[0];
+        var formData = new FormData();
+        formData.append('file', file, file.name);
 
-      function println(html) {
-        var div = document.createElement('div');
-        div.innerHTML = html;
-        document.getElementsByTagName('body')[0].appendChild(div);
-      }
-
-      function echo(xhr,data) {
-        var len = 0;
+        var xhr = new XMLHttpRequest();
+        xhr.open("post", "/upload", true);
         xhr.onreadystatechange =
           function() {
             if (xhr.readyState == 3 && xhr.status == 200) {
-              var chunk = xhr.responseText.substr(len);
-              len = len + chunk.length; 
-              println(chunk);
+              var chunks = xhr.responseText.split('\n');
+              var chunk = chunks[chunks.length - 2];
+              document.getElementById('bar').style.width = chunk;
+              document.getElementById('label').innerHTML = chunk;
             }
             if (xhr.readyState == 4 && xhr.status == 200) {
-              println('<hr />');
+              document.getElementById('label').innerHTML = "Done!";
             }
-          }
-        xhr.open('POST', '/echo', true);
-        xhr.send(data);
-      }
-
-      function go() {
-        var data = document.getElementById('data').value;
-        echo(XHR(), data);
+          };
+        xhr.send(formData);
       }
 
     </script>
   </head>
   <body>
 
-<textarea id="data" rows="8" cols="40">Hello, world!
-Line 2
+    <div class="form">
+      <input type="file" id="file" name="file" />
+      <button style="float: right;" onclick="upload()">upload</button>
+    </div>
 
-Line 4
-One more...
-All done!</textarea>
+    <div class="progress">
+      <div id="bar" class="bar" style="width: 0%">
+        &nbsp;
+      </div>
+      <div id="label" class="label">
+        &nbsp;
+      </div>
+    </div>
 
-    <button onclick="go()">echo</button>
-    <hr />
   </body>
 </head>
