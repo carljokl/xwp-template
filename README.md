@@ -27,12 +27,12 @@ Configure sbt:
 *project/build.properties*:
 
 ```
-sbt.version=0.13.0
+sbt.version=0.13.5
 ```
 
 *project/plugins.sbt*:
 ```
-addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "0.5.0")
+addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "1.0.0-M2")
 ```
 
 *build.sbt*:
@@ -43,13 +43,9 @@ organization := "com.earldouglas"
 
 version := "0.1.0-SNAPSHOT"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
-seq(webSettings :_*)
-
-libraryDependencies += "org.eclipse.jetty" % "jetty-webapp" % "9.1.0.v20131115" % "container"
-
-libraryDependencies += "org.eclipse.jetty" % "jetty-plus" % "9.1.0.v20131115" % "container"
+jetty()
 
 libraryDependencies += "javax.servlet" % "servlet-api" % "2.5" % "provided"
 ```

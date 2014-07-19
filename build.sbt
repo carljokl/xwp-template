@@ -4,15 +4,11 @@ organization := "com.earldouglas"
 
 version := "0.1.0-SNAPSHOT"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
-seq(webSettings :_*)
+jetty()
 
-libraryDependencies ++= Seq( // container
-    "org.eclipse.jetty" % "jetty-webapp" % "9.1.0.v20131115" % "container"
-  , "org.eclipse.jetty" % "jetty-plus" % "9.1.0.v20131115" % "container"
-  , "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"
-)
+libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"
 
 libraryDependencies ++= Seq( // test
     "org.eclipse.jetty" % "jetty-webapp" % "9.1.0.v20131115" % "test"
