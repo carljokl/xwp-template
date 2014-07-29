@@ -4,10 +4,5 @@ scala:
 env:
   global:
     secure: Lb+lNIbdQagnYVhOrNES9F4Or/42T8+NaaEfF+ODkyn8sG1moFELCDgmICJCO+2ZxNkWtv0sxzptenG174sXeXELWzTfTPSNVhbj8PizGPpnPj3aeuMKTRC/+uRMhMaFjp/h9SSlYsoog3KrY8FA22ksIx5QbiGzwgL5M9AM1E4=
-script: sbt coveralls package linkWar
-after_success:
-- if [[ "$TRAVIS_BRANCH" == "master" ]]; then
-    wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh ;
-    heroku plugins:install https://github.com/heroku/heroku-deploy ;
-    heroku deploy:war --war target/xwp-template.war --app xwp-template ;
-  fi
+script: sbt coveralls package
+after_success: sbt deploy

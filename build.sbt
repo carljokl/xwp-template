@@ -21,12 +21,9 @@ ScoverageSbtPlugin.instrumentSettings
 
 CoverallsPlugin.coverallsSettings
 
-val linkWar = taskKey[Unit]("Symlink the packaged .war file")
+val deploy = taskKey[Unit]("Deploy the packaged .war file via heroku")
 
-linkWar := {
-  val (art, pkg) = packagedArtifact.in(Compile, packageWar).value
-  import java.nio.file.Files
-  val link = (target.value / (art.name + "." + art.extension))
-  link.delete
-  Files.createSymbolicLink(link.toPath, pkg.toPath)
+deploy := {
+  val (_, warFile) = (packagedArtifact in (Compile, packageWar)).value
+  ("bash deploy.sh " + warFile.getPath) !
 }
