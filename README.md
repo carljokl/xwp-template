@@ -32,7 +32,7 @@ sbt.version=0.13.5
 
 *project/plugins.sbt*:
 ```
-addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "1.0.0-M2")
+addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "1.0.0")
 ```
 
 *build.sbt*:
