@@ -7,6 +7,7 @@ version := "0.1.0-SNAPSHOT"
 scalaVersion := "2.10.4"
 
 jetty()
+//tomcat()
 
 libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"
 
@@ -27,3 +28,8 @@ deploy := {
   val (_, warFile) = (packagedArtifact in (Compile, packageWar)).value
   ("bash deploy.sh " + warFile.getPath) !
 }
+
+ideaExcludeFolders += ".idea"
+
+ideaExcludeFolders += ".idea_modules"
+

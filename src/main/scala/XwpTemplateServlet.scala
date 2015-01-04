@@ -13,7 +13,9 @@ class XwpTemplateServlet extends HttpServlet {
     response.setContentType("text/html")
     response.setCharacterEncoding("UTF-8")
 
-    val responseBody: NodeSeq = <html><body><h1>Hello, world!</h1></body></html>
-    response.getWriter.write(responseBody.toString)
+    val responseBody: NodeSeq = <html><body><h1>Hello, world!</h1>
+      <a href="/">home</a>
+    </body></html>
+    response.getWriter.write(responseBody.toString())
   }
 }
