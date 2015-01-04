@@ -28,4 +28,3 @@ deploy := {
   val (_, warFile) = (packagedArtifact in (Compile, packageWar)).value
   ("bash deploy.sh " + warFile.getPath) !
 }
-
