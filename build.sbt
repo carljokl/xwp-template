@@ -29,7 +29,3 @@ deploy := {
   ("bash deploy.sh " + warFile.getPath) !
 }
 
-ideaExcludeFolders += ".idea"
-
-ideaExcludeFolders += ".idea_modules"
-
